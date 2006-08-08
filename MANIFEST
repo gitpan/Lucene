@@ -1,0 +1,27 @@
+Changes
+MANIFEST
+META.yml # Will be created by "make dist"
+Makefile.PL
+README
+lib/Lucene.pm
+Lucene.xs
+xs/FSDirectory.xs
+xs/RAMDirectory.xs
+xs/Term.xs
+xs/Document.xs
+xs/IndexReader.xs
+xs/IndexWriter.xs
+xs/Field.xs
+xs/QueryParser.xs
+xs/Query.xs
+xs/Hits.xs
+xs/IndexSearcher.xs
+xs/TermQuery.xs
+xs/FuzzyQuery.xs
+xs/SimpleAnalyzer.xs
+xs/StandardAnalyzer.xs
+xs/StopAnalyzer.xs
+xs/WhitespaceAnalyzer.xs
+t/00-load.t
+typemap
+

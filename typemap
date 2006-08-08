@@ -1,0 +1,67 @@
+TYPEMAP
+Document *           T_CPP_CLASS
+IndexWriter *        T_CPP_CLASS
+IndexReader *        T_CPP_CLASS
+Term *               T_CPP_CLASS
+IndexSearcher *      T_CPP_CLASS
+Query *              T_CPP_CLASS
+Hits *               T_CPP_CLASS
+TermQuery *          T_CPP_CLASS
+FuzzyQuery *         T_CPP_CLASS
+QueryParser *        T_CPP_CLASS
+SimpleAnalyzer *     T_CPP_CLASS
+StopAnalyzer *       T_CPP_CLASS
+WhitespaceAnalyzer * T_CPP_CLASS
+StandardAnalyzer *   T_CPP_CLASS
+RAMDirectory *       T_CPP_CLASS
+FSDirectory *        T_CPP_CLASS
+Field *              T_CPP_CLASS
+Analyzer *           T_CPP_CLASS
+Directory *          T_CPP_CLASS
+
+
+INPUT
+T_CPP_CLASS
+        // Is $arg an object ? And is it a hash reference ?
+	if (sv_isobject($arg) && SvTYPE(SvRV($arg)) == SVt_PVHV) {
+          // Dereference hash
+	  HV *hv = (HV *) SvRV($arg);
+          // Get C++ object pointer from hash as integer value
+	  SV **sv = hv_fetch(hv, \"_objptr\", 7, 0);
+	  if (sv) {
+            // Transform integer value to pointer value
+	    $var = INT2PTR($type, SvIV(*sv));
+	    if (!$var) {
+              // Pointer shouldn't be zero. Something went wrong. Let's
+              // warn the user and return undef.
+	      warn ( \"${Package}::$func_name(): C++ object pointer is NULL\");
+              XSRETURN_UNDEF;
+            }
+	  } else {
+            // Hash doesn't contain a hash entry for _objptr. Let's 
+            // warn the user and return undef.
+	    warn ( \"${Package}::$func_name(): key _objptr is missing\");
+            XSRETURN_UNDEF;
+          }
+        // $arg is either not an object or a hash reference.
+        // Warn user and return undef.
+	} else {
+	  warn ( \"${Package}::$func_name(): $var is not a blessed hash reference\");
+          XSRETURN_UNDEF;
+        }
+
+OUTPUT
+T_CPP_CLASS
+        {
+          // Create hash
+          HV* new_hv = newHV(); 
+          // Create reference to hash without increasing its reference count
+          SV* tmp_rv = newRV_noinc((SV*) new_hv);
+          // Store pointer to C++ object as hash entry with key _objptr
+          hv_store(new_hv, "_objptr", 7, newSViv(PTR2IV((void*)$var)), 0);
+          // Bless hash reference as CLASS and copy it to $arg
+          sv_setsv($arg, sv_bless(tmp_rv, gv_stashpv(CLASS,1)));
+          // Remove temporary reference hash by setting ref count to zero
+          SvREFCNT_dec((SV*) tmp_rv);
+          // printf(\"created hash %p for %s\\n\", new_hv, CLASS);
+        }
