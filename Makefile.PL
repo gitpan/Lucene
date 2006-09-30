@@ -2,12 +2,14 @@ use strict;
 use warnings;
 use ExtUtils::MakeMaker;
 
-my $author = 'Thomas Busch <tbusch@cpan.org>';
+my $author = 'Thomas Busch <tbusch at cpan dot org>';
 
 ## hash that specifies the directory to look for CLucene/clucene-config.h
 ## for each OS
 my %h_config_dirs = (
-  "linux" => "/usr/lib" 
+  "linux" => "/usr/lib",
+  "freebsd" => "/usr/local/lib",
+  "darwin" => "/usr/local/lib",
 );
 
 my $config_dir = $h_config_dirs{$^O};
@@ -43,3 +45,4 @@ WriteMakefile(
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'Lucene-*' },
 );
+

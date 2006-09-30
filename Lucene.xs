@@ -24,6 +24,8 @@ typedef lucene::index::IndexReader IndexReader;
 typedef lucene::index::Term Term;
 typedef lucene::search::IndexSearcher IndexSearcher;
 typedef lucene::search::Hits Hits;
+typedef lucene::search::Sort Sort;
+typedef lucene::search::SortField SortField;
 typedef lucene::search::Query Query;
 typedef lucene::search::TermQuery TermQuery;
 typedef lucene::search::FuzzyQuery FuzzyQuery;
@@ -64,6 +66,12 @@ INCLUDE: xs/IndexSearcher.xs
 
 MODULE = Lucene        PACKAGE = Lucene::Search::Hits
 INCLUDE: xs/Hits.xs
+
+MODULE = Lucene        PACKAGE = Lucene::Search::Sort
+INCLUDE: xs/Sort.xs
+
+MODULE = Lucene        PACKAGE = Lucene::Search::SortField
+INCLUDE: xs/SortField.xs
 
 MODULE = Lucene        PACKAGE = Lucene::Search::Query
 INCLUDE: xs/Query.xs

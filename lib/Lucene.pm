@@ -6,7 +6,7 @@ use 5.006;
 use warnings;
 use strict;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 our @ISA = qw( Exporter DynaLoader );
 our %EXPORT_TAGS = ( 'all' => [ qw() ] );
 our @EXPORT_OK   = ( @{ $EXPORT_TAGS{'all'} } );
@@ -29,7 +29,7 @@ Lucene -- API to the C++ port of the Lucene search engine
   $tmp_writer->close;
   undef $tmp_writer;
 
-=head2 Choose your Analyzer (string tokenizer):
+=head2 Choose your Analyzer (string tokenizer)
 
   # lowercases text and splits it at non-letter characters 
   my $analyzer = Lucene::Analysis::SimpleAnalyzer();
@@ -42,14 +42,14 @@ Lucene -- API to the C++ port of the Lucene search engine
   # web hostnames, IP addresses, etc) and removed stop words
   my $analyzer = Lucene::Analysis::Standard::StandardAnalyzer();
 
-=head2 Choose your Store (storage engine):
+=head2 Choose your Store (storage engine)
   
   # in-memory storage
   my $store = new Lucene::Store::RAMDirectory();
   # disk-based storage
   my $store = Lucene::Store::FSDirectory->getDirectory("/home/lucene", 0);
 
-=head2 Open and configure an IndexWriter:
+=head2 Open and configure an IndexWriter
 
   my $writer = new Lucene::Index::IndexWriter($store, $analyzer, 0);
   # optional settings for power users
@@ -59,7 +59,7 @@ Lucene -- API to the C++ port of the Lucene search engine
   $writer->setMinMergeDocs(10);
   $writer->setMaxMergeDocs(100);
 
-=head2 Create Documents and add Fields:
+=head2 Create Documents and add Fields
 
   my $doc = new Lucene::Document;
   # field gets analyzed, indexed and stored
@@ -71,17 +71,17 @@ Lucene -- API to the C++ port of the Lucene search engine
   # field gets analyzed and indexed 
   $doc->add(Lucene::Document::Field->UnStored("categories", $categories));
 
-=head2 Add Documents to an IndexWriter:
+=head2 Add Documents to an IndexWriter
 
   $writer->addDocument($doc);
 
-=head2 Optimize your index and close the IndexWriter:
+=head2 Optimize your index and close the IndexWriter
   
   $writer->optimize();
   $writer->close();
   undef $writer; 
 
-=head2 Delete Documents:
+=head2 Delete Documents
 
   my $reader = Lucene::Index::IndexReader->open($store);
   my $term = new Lucene::Index::Term("isbn", $isbn);
@@ -89,7 +89,7 @@ Lucene -- API to the C++ port of the Lucene search engine
   $reader->close();
   undef $reader;
 
-=head2 Query index:
+=head2 Query index
 
   # initalize searcher and parser
   my $analyzer = Lucene::Analysis::SimpleAnalyzer();
@@ -103,8 +103,21 @@ Lucene -- API to the C++ port of the Lucene search engine
   # build a query on another field
   my $query = $parser->parse("title:cookbook");
 
+  # define a sort on one field
+  my $sortfield = new Lucene::Search::SortField("unixtime"); 
+  my $reversed_sortfield = new Lucene::Search::SortField("unixtime", 1);
+  my $sort = new Lucene::Search::Sort($sortfield);
+
+  # define a sort on two fields
+  my $sort = new Lucene::Search::Sort($sortfield1, $sortfield2);
+
+  # use Lucene's INDEXORDER or RELEVANCE sort
+  my $sort = Lucene::Search::Sort->INDEXORDER;
+  my $sort = Lucene::Search::Sort->RELEVANCE;
+
   # query index and get results
   my $hits = $searcher->search($query);
+  my $sorted_hits = $searcher->search($query, $sort);
 
   # get number of results
   my $num_hits = $hits->length();
@@ -127,7 +140,7 @@ Lucene -- API to the C++ port of the Lucene search engine
   undef $searcher;
 }
 
-=head2 Close your Store:
+=head2 Close your Store
 
   $store->close;
   undef $store;
@@ -202,7 +215,7 @@ it under the same terms as Perl itself.
 
 L<Plucene> - a pure-Perl implementation of Lucene
 
-L<Kinosearch> - a search engine library inspired by Lucene
+L<KinoSearch> - a search engine library inspired by Lucene
 
 =head1 DISCLAIMER OF WARRANTY
 

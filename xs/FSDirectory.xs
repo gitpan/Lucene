@@ -4,13 +4,24 @@ const char* CLASS;
 const char* path
 bool create
     CODE:
-        RETVAL = FSDirectory::getDirectory(path, create);
+        try {
+          RETVAL = FSDirectory::getDirectory(path, create);
+        } catch (CLuceneError& e) {
+          die("[Lucene::Store::FSDirectory->getDirectory()] %s\n", e.twhat());
+        }
     OUTPUT:
         RETVAL
+
+void 
+close(self)
+       FSDirectory * self
+    CODE:
+       self->close();
 
 void
 DESTROY(self)
        FSDirectory * self
     CODE:
+       self->close();
        delete self;
 

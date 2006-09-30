@@ -15,16 +15,34 @@ Directory* directory
 
 
 Hits * 
-search(self, query)
-IndexSearcher* self
-Query* query
-    PREINIT:
-        const char* CLASS = "Lucene::Search::Hits";
-    CODE:
-        RETVAL = self->search(query);
-    OUTPUT:
-        RETVAL
-
+search(self, query, sort = 0)
+    CASE: items == 2
+        IndexSearcher* self
+        Query* query
+        PREINIT:
+          const char* CLASS = "Lucene::Search::Hits";
+        CODE:
+          try {
+            RETVAL = self->search(query);
+          } catch (CLuceneError& e) {
+            die("[Lucene::Search::IndexSearcher->search()] %s\n", e.twhat());
+          }
+        OUTPUT:
+          RETVAL
+    CASE: items == 3
+        IndexSearcher* self
+        Query* query
+        Sort* sort
+        PREINIT:
+          const char* CLASS = "Lucene::Search::Hits";
+        CODE:
+          try {
+            RETVAL = self->search(query, sort);
+          } catch (CLuceneError& e) {
+            die("[Lucene::Search::IndexSearcher->search()] %s\n", e.twhat());
+          }
+        OUTPUT:
+          RETVAL
 
 void
 close(self)

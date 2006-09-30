@@ -18,6 +18,7 @@ void
 DESTROY(self)
         RAMDirectory * self
     CODE:
+        self->close();
         delete self;
 //        printf("deleted ramdirectory\n");
 
