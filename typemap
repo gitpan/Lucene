@@ -1,25 +1,27 @@
 TYPEMAP
-Document *           T_CPP_CLASS
-IndexWriter *        T_CPP_CLASS
-IndexReader *        T_CPP_CLASS
-Term *               T_CPP_CLASS
-IndexSearcher *      T_CPP_CLASS
-Query *              T_CPP_CLASS
-Hits *               T_CPP_CLASS
-Sort *               T_CPP_CLASS
-SortField *          T_CPP_CLASS
-TermQuery *          T_CPP_CLASS
-FuzzyQuery *         T_CPP_CLASS
-QueryParser *        T_CPP_CLASS
-SimpleAnalyzer *     T_CPP_CLASS
-StopAnalyzer *       T_CPP_CLASS
-WhitespaceAnalyzer * T_CPP_CLASS
-StandardAnalyzer *   T_CPP_CLASS
-RAMDirectory *       T_CPP_CLASS
-FSDirectory *        T_CPP_CLASS
-Field *              T_CPP_CLASS
-Analyzer *           T_CPP_CLASS
-Directory *          T_CPP_CLASS
+Document *              T_CPP_CLASS
+IndexWriter *           T_CPP_CLASS
+IndexReader *           T_CPP_CLASS
+Term *                  T_CPP_CLASS
+IndexSearcher *         T_CPP_CLASS
+Query *                 T_CPP_CLASS
+Hits *                  T_CPP_CLASS
+Sort *                  T_CPP_CLASS
+SortField *             T_CPP_CLASS
+TermQuery *             T_CPP_CLASS
+FuzzyQuery *            T_CPP_CLASS
+QueryParser *           T_CPP_CLASS
+MultiFieldQueryParser * T_CPP_CLASS
+SimpleAnalyzer *        T_CPP_CLASS
+StopAnalyzer *          T_CPP_CLASS
+WhitespaceAnalyzer *    T_CPP_CLASS
+StandardAnalyzer *      T_CPP_CLASS
+RAMDirectory *          T_CPP_CLASS
+FSDirectory *           T_CPP_CLASS
+Field *                 T_CPP_CLASS
+Analyzer *              T_CPP_CLASS
+Directory *             T_CPP_CLASS
+Similarity *            T_CPP_CLASS
 
 
 INPUT

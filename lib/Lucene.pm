@@ -6,7 +6,7 @@ use 5.006;
 use warnings;
 use strict;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 our @ISA = qw( Exporter DynaLoader );
 our %EXPORT_TAGS = ( 'all' => [ qw() ] );
 our @EXPORT_OK   = ( @{ $EXPORT_TAGS{'all'} } );
@@ -103,15 +103,22 @@ Lucene -- API to the C++ port of the Lucene search engine
   # build a query on another field
   my $query = $parser->parse("title:cookbook");
 
-  # define a sort on one field
+  # print query to a string (for debug purposes)
+  my $string = $query->toString();
+
+  # define a custom sort field
   my $sortfield = new Lucene::Search::SortField("unixtime"); 
   my $reversed_sortfield = new Lucene::Search::SortField("unixtime", 1);
-  my $sort = new Lucene::Search::Sort($sortfield);
 
-  # define a sort on two fields
+  # use Lucene's build-in sort fields
+  my $sortfield_by_score = Lucene::Search::SortField->FIELD_SCORE;
+  my $sortfield_by_doc_num = Lucene::Search::SortField->FIELD_DOC;
+
+  # define a sort on one field or on two fields
+  my $sort = new Lucene::Search::Sort($sortfield);
   my $sort = new Lucene::Search::Sort($sortfield1, $sortfield2);
 
-  # use Lucene's INDEXORDER or RELEVANCE sort
+  # use Lucene's build-in sort
   my $sort = Lucene::Search::Sort->INDEXORDER;
   my $sort = Lucene::Search::Sort->RELEVANCE;
 
@@ -140,18 +147,32 @@ Lucene -- API to the C++ port of the Lucene search engine
   undef $searcher;
 }
 
+=head2 Query multiple fields simultaneously
+
+  my $parser = new Lucene::MultiFieldQueryParser("default_field", $analyzer);
+  my $query = $parser->parse($query_string, \@field_names, $analyzer);
+
 =head2 Close your Store
 
   $store->close;
   undef $store;
 
+=head2 Customize Lucene's scoring formula (for Lucene experts)
+
+It is possible to customize Lucene's scoring formula by defining your own
+Similarity object using perl XS and passing it on to both the IndexWriter
+and the IndexSearcher
+
+  $searcher->setSimilarity($similarity);
+  $writer->setSimilarity($similarity);
+
 =head1 DESCRIPTION
 
-Like it or not Apache Lucene has become the de-facto standard for open-source
+Like it or not Lucene has become the de-facto standard for open-source
 high-performance search. It has a large user-base, is well documented and has
-plenty of committers. Unfortunately Apache Lucene is entirely written in Java
-and therefore of relatively little use for perl programmers. Fortunately in
-the recent years a group of C++ programmers led by Ben van Klinken decided
+plenty of committers. Unfortunately until recently Lucene was entirely written
+in Java and therefore of relatively little use for perl programmers. Fortunately
+in the recent years a group of C++ programmers led by Ben van Klinken decided
 to port Java Lucene to C++. 
 
 The purpose of the module is to export the C++ Lucene API to perl and at
@@ -168,9 +189,9 @@ included all ASCII characters.
 =head1 INDEX COMPATIBLITY
 
 For the moment indices produced by this module are not compatible with
-those from Apache Lucene. The reason for this is that this module uses
-1-byte character encoding as opposed to 2-byte (widechar) encoding with
-Apache Lucene.
+those from Java Lucene. The reason for this is that this module uses
+1-byte character encoding as opposed to modified UTF8 encoding with
+Java Lucene.
 
 =head1 INSTALLATION
 
@@ -186,6 +207,7 @@ it in your standard library path.
 On a Linux platform this goes as follows:
 
     wget http://kent.dl.sourceforge.net/sourceforge/clucene/clucene-core-0.9.15.tar.gz
+    tar xzf clucene-core-0.9.15.tar.gz
     cd clucene-core-0.9.15
     ./autogen.sh
     ./configure --disable-debug --prefix=/usr --exec-prefix=/usr --enable-ascii

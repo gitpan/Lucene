@@ -13,6 +13,7 @@ xs/IndexReader.xs
 xs/IndexWriter.xs
 xs/Field.xs
 xs/QueryParser.xs
+xs/MultiFieldQueryParser.xs
 xs/Query.xs
 xs/Hits.xs
 xs/Sort.xs
@@ -26,4 +27,5 @@ xs/StopAnalyzer.xs
 xs/WhitespaceAnalyzer.xs
 t/00-load.t
 typemap
-
+Av_CharPtrPtr.cpp
+Av_CharPtrPtr.h

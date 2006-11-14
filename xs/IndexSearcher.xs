@@ -45,6 +45,18 @@ search(self, query, sort = 0)
           RETVAL
 
 void
+setSimilarity(self, similarity)
+IndexSearcher* self
+Similarity* similarity
+    CODE:
+        self->setSimilarity(similarity);
+    CLEANUP:
+        // Memorize Directory and Analyzer in returned blessed hash reference.
+        // We don't want them to be destroyed by perl before the C++ object they
+        // contain gets destroyed by C++. Otherwise this would cause a seg fault.
+        hv_store((HV *) SvRV(ST(0)), "Similarity", 10, newRV(SvRV(ST(1))), 1);
+
+void
 close(self)
 IndexSearcher* self
     CODE:

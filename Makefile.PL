@@ -40,6 +40,7 @@ WriteMakefile(
  
     ## 
     INC                 => "-I$config_dir",
+    OBJECT              => '$(O_FILES)',
 
     OPTIMIZE            => ' ',
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },

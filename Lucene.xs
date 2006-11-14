@@ -4,12 +4,14 @@ extern "C" {
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
+#include "Av_CharPtrPtr.h"  /* XS_*_charPtrPtr() */
 #ifdef __cplusplus
 }
 #endif
 
 
 #include "CLucene.h"
+#include "CLucene/queryParser/MultiFieldQueryParser.h"
 #include <locale.h>
 
 typedef lucene::analysis::Analyzer Analyzer;
@@ -29,7 +31,9 @@ typedef lucene::search::SortField SortField;
 typedef lucene::search::Query Query;
 typedef lucene::search::TermQuery TermQuery;
 typedef lucene::search::FuzzyQuery FuzzyQuery;
+typedef lucene::search::Similarity Similarity;
 typedef lucene::queryParser::QueryParser QueryParser;
+typedef lucene::queryParser::MultiFieldQueryParser MultiFieldQueryParser;
 typedef lucene::store::Directory Directory;
 typedef lucene::store::FSDirectory FSDirectory;
 typedef lucene::store::RAMDirectory RAMDirectory;
@@ -84,6 +88,9 @@ INCLUDE: xs/FuzzyQuery.xs
 
 MODULE = Lucene        PACKAGE = Lucene::QueryParser
 INCLUDE: xs/QueryParser.xs
+
+MODULE = Lucene        PACKAGE = Lucene::MultiFieldQueryParser
+INCLUDE: xs/MultiFieldQueryParser.xs
 
 MODULE = Lucene        PACKAGE = Lucene::Store::FSDirectory
 INCLUDE: xs/FSDirectory.xs

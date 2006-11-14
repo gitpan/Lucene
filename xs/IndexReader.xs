@@ -3,7 +3,12 @@ open(CLASS, directory)
 const char* CLASS
 Directory* directory
     CODE:
-        RETVAL = IndexReader::open(directory);
+        try {
+          RETVAL = IndexReader::open(directory);
+        } catch (CLuceneError& e) {
+          die("[Lucene::Index::IndexReader->open()] %s\n", e.twhat());
+        }
+
     OUTPUT:
         RETVAL
     CLEANUP:

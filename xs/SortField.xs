@@ -16,3 +16,19 @@ new(CLASS, fieldname, reverse = 0)
     OUTPUT:
         RETVAL
 
+
+SortField *
+FIELD_SCORE(CLASS)
+const char* CLASS;
+  CODE:
+       RETVAL = new SortField (NULL, SortField::DOCSCORE, false);
+  OUTPUT:
+       RETVAL
+
+SortField *
+FIELD_DOC(CLASS)
+const char* CLASS;
+  CODE:
+       RETVAL = new SortField (NULL, SortField::DOC, false);
+  OUTPUT:
+       RETVAL
