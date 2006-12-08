@@ -13,10 +13,10 @@ add(self, field)
     CODE:
        self->add(*field);
 
-const char*
+const wchar_t*
 get(self, field)
        Document* self
-       char* field
+       wchar_t* field
     CODE:
        RETVAL = self->get(field);
     OUTPUT:

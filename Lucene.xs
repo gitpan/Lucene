@@ -12,7 +12,7 @@ extern "C" {
 
 #include "CLucene.h"
 #include "CLucene/queryParser/MultiFieldQueryParser.h"
-#include <locale.h>
+#include "CLucene/search/QueryFilter.h"
 
 typedef lucene::analysis::Analyzer Analyzer;
 typedef lucene::analysis::SimpleAnalyzer SimpleAnalyzer;
@@ -26,6 +26,8 @@ typedef lucene::index::IndexReader IndexReader;
 typedef lucene::index::Term Term;
 typedef lucene::search::IndexSearcher IndexSearcher;
 typedef lucene::search::Hits Hits;
+typedef lucene::search::Filter Filter;
+typedef lucene::search::QueryFilter QueryFilter;
 typedef lucene::search::Sort Sort;
 typedef lucene::search::SortField SortField;
 typedef lucene::search::Query Query;
@@ -70,6 +72,9 @@ INCLUDE: xs/IndexSearcher.xs
 
 MODULE = Lucene        PACKAGE = Lucene::Search::Hits
 INCLUDE: xs/Hits.xs
+
+MODULE = Lucene        PACKAGE = Lucene::Search::QueryFilter
+INCLUDE: xs/QueryFilter.xs
 
 MODULE = Lucene        PACKAGE = Lucene::Search::Sort
 INCLUDE: xs/Sort.xs

@@ -1,8 +1,8 @@
 Term *
 new(CLASS, field, text)
 const char* CLASS;
-char* field;
-char* text;
+wchar_t* field;
+wchar_t* text;
     CODE:
         RETVAL = new Term(field, text);
 //        printf("created term\n");

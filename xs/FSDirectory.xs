@@ -7,7 +7,7 @@ bool create
         try {
           RETVAL = FSDirectory::getDirectory(path, create);
         } catch (CLuceneError& e) {
-          die("[Lucene::Store::FSDirectory->getDirectory()] %s\n", e.twhat());
+          die("[Lucene::Store::FSDirectory->getDirectory()] %s\n", e.what());
         }
     OUTPUT:
         RETVAL

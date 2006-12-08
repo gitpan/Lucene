@@ -7,6 +7,8 @@ IndexSearcher *         T_CPP_CLASS
 Query *                 T_CPP_CLASS
 Hits *                  T_CPP_CLASS
 Sort *                  T_CPP_CLASS
+Filter *                T_CPP_CLASS
+QueryFilter *           T_CPP_CLASS
 SortField *             T_CPP_CLASS
 TermQuery *             T_CPP_CLASS
 FuzzyQuery *            T_CPP_CLASS
@@ -22,6 +24,10 @@ Field *                 T_CPP_CLASS
 Analyzer *              T_CPP_CLASS
 Directory *             T_CPP_CLASS
 Similarity *            T_CPP_CLASS
+
+wchar_t *               T_WCHAR
+const wchar_t *         T_WCHAR
+
 
 
 INPUT
@@ -54,6 +60,32 @@ T_CPP_CLASS
           XSRETURN_UNDEF;
         }
 
+T_WCHAR
+        {
+          // Alloc memory for wide char string.  This could be a bit more
+          // then necessary.
+          Newz(0, $var, SvLEN($arg) + 1, wchar_t);
+
+          U8* src = (U8*) SvPV_nolen($arg);
+          wchar_t* dst = (wchar_t*) $var;
+
+          if (SvUTF8($arg)) {
+            // UTF8 to wide char mapping
+            STRLEN len;
+            while (*src) {
+              *dst++ = utf8_to_uvuni(src, &len);
+              src += len;
+            }
+          } else {
+            // char to wide char mapping
+            while (*src) {
+              *dst++ = (wchar_t) *src++;
+            }
+          }
+          *dst = 0;
+          SAVEFREEPV($var);
+        }
+
 OUTPUT
 T_CPP_CLASS
         {
@@ -69,3 +101,26 @@ T_CPP_CLASS
           SvREFCNT_dec((SV*) tmp_rv);
           // printf(\"created hash %p for %s\\n\", new_hv, CLASS);
         }
+
+T_WCHAR
+        {
+          wchar_t* src = (wchar_t*) $var;
+          U8* dst;
+          U8* d;
+
+          // Alloc memory for wide char string.  This is clearly wider
+          // then necessary in most cases but no choice.
+          Newz(0, dst, 3 * wcslen(src) + 1, U8);
+
+          d = dst;
+          while (*src) {
+            d = uvuni_to_utf8(d, *src++);
+          }
+          *d = 0;
+
+          sv_setpv((SV*)$arg, (char*) dst);
+          sv_utf8_decode($arg);
+
+          Safefree(dst);
+        }
+

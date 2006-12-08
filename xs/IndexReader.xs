@@ -6,7 +6,7 @@ Directory* directory
         try {
           RETVAL = IndexReader::open(directory);
         } catch (CLuceneError& e) {
-          die("[Lucene::Index::IndexReader->open()] %s\n", e.twhat());
+          die("[Lucene::Index::IndexReader->open()] %s\n", e.what());
         }
 
     OUTPUT:

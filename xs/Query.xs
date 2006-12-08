@@ -1,4 +1,4 @@
-char*
+wchar_t*
 toString(self)
        Query* self
     CODE:

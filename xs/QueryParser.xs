@@ -1,7 +1,7 @@
 QueryParser *
 new(CLASS, field, analyzer)
 const char* CLASS;
-char* field
+wchar_t* field
 Analyzer* analyzer
     CODE:
         RETVAL = new QueryParser(field, analyzer);
@@ -16,11 +16,15 @@ Analyzer* analyzer
 Query*
 parse(self, query_string)
 QueryParser* self
-char* query_string
+wchar_t* query_string
     PREINIT:
         const char* CLASS = "Lucene::Search::Query";
     CODE:
-        RETVAL = self->parse(query_string);
+        try {
+          RETVAL = self->parse(query_string);
+        } catch (CLuceneError& e) {
+          die("[Lucene::QueryParser->parse()] %s\n", e.what());
+        }
     OUTPUT:
         RETVAL
 

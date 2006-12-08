@@ -6,11 +6,15 @@ use 5.006;
 use warnings;
 use strict;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 our @ISA = qw( Exporter DynaLoader );
 our %EXPORT_TAGS = ( 'all' => [ qw() ] );
 our @EXPORT_OK   = ( @{ $EXPORT_TAGS{'all'} } );
 bootstrap Lucene $VERSION;
+
+# This flag is necessary so that external variables get exported
+# On Linux this corresponds to RTLD_GLOBAL of the function dlopen
+sub dl_load_flags { 0x01 }
 
 1; # End of Lucene
 
@@ -32,15 +36,15 @@ Lucene -- API to the C++ port of the Lucene search engine
 =head2 Choose your Analyzer (string tokenizer)
 
   # lowercases text and splits it at non-letter characters 
-  my $analyzer = Lucene::Analysis::SimpleAnalyzer();
+  my $analyzer = new Lucene::Analysis::SimpleAnalyzer();
   # same as before and removes stop words
-  my $analyzer = Lucene::Analysis::StopAnalyzer();
+  my $analyzer = new Lucene::Analysis::StopAnalyzer();
   # splits text at whitespace characters
-  my $analyzer = Lucene::Analysis::WhitespaceAnalyzer();
+  my $analyzer = new Lucene::Analysis::WhitespaceAnalyzer();
   # lowercases text, tokenized it based on a grammer that 
   # leaves named authorities intact (e-mails, company names,
   # web hostnames, IP addresses, etc) and removed stop words
-  my $analyzer = Lucene::Analysis::Standard::StandardAnalyzer();
+  my $analyzer = new Lucene::Analysis::Standard::StandardAnalyzer();
 
 =head2 Choose your Store (storage engine)
   
@@ -92,7 +96,7 @@ Lucene -- API to the C++ port of the Lucene search engine
 =head2 Query index
 
   # initalize searcher and parser
-  my $analyzer = Lucene::Analysis::SimpleAnalyzer();
+  my $analyzer = new Lucene::Analysis::SimpleAnalyzer();
   my $store = Lucene::Store::FSDirectory->getDirectory("/home/lucene", 0);
   my $searcher = new Lucene::Search::IndexSearcher($store);
   my $parser = new Lucene::QueryParser("default_field", $analyzer);
@@ -122,9 +126,14 @@ Lucene -- API to the C++ port of the Lucene search engine
   my $sort = Lucene::Search::Sort->INDEXORDER;
   my $sort = Lucene::Search::Sort->RELEVANCE;
 
+  # create a filter to contrain documents in which search is done
+  my $filter = new Lucene::Search::QueryFilter($query);
+
   # query index and get results
   my $hits = $searcher->search($query);
   my $sorted_hits = $searcher->search($query, $sort);
+  my $filtered_hits = $searcher->search($query, $filter);
+  my $filtered_sorted_hits = $searcher->search($query, $filter, $sort);
 
   # get number of results
   my $num_hits = $hits->length();
@@ -146,6 +155,11 @@ Lucene -- API to the C++ port of the Lucene search engine
   undef $fsdir;
   undef $searcher;
 }
+
+=head2 Get/Set field boost factor
+
+my $boost = $field->getBoost();
+$field->setBoost($boost);
 
 =head2 Query multiple fields simultaneously
 
@@ -183,15 +197,33 @@ than the original.
 
 =head1 CHARACTER SUPPORT
 
-Currently only ISO 8859-1 (Latin-1) characters are supported. Obviously this
-included all ASCII characters.
+This module support both types of perl strings that are available since perl 5.8.0
+that is ISO 8859-1 (Latin-1) and UTF-8 encoded strings. For UTF-8 you need to make
+sure that the UTF-8 flag is on. You can achieve this by applying 
 
-=head1 INDEX COMPATIBLITY
+  utf8::upgrade($string)
 
-For the moment indices produced by this module are not compatible with
-those from Java Lucene. The reason for this is that this module uses
-1-byte character encoding as opposed to modified UTF8 encoding with
-Java Lucene.
+to your UTF-8 string. This will garantee the internal UTF-8 flag is on.
+
+=head1 INDEX PORTABILITY
+
+You can copy a Lucene index directory from one platform to another and it will
+work just as well.
+
+=head1 DEVELOPMENT AND DIAGNOSTIC TOOL
+
+Lucene comes with a handy development and diagnostic tool which allows
+to access already existing Lucene indices and to display and modify
+their content. This tool is currently written in Java but doesn't
+require any Java programming knowledge. 
+
+You can download the tool (lukeall.jar) from the following webpage:
+
+  http://www.getopt.org/luke/
+
+and run it with the following command:
+
+  java -jar lukeall.jar
 
 =head1 INSTALLATION
 
@@ -201,16 +233,16 @@ get it is to go to the following page
     http://sourceforge.net/projects/clucene/
 
 and download the latest STABLE clucene-core version. Currently it is
-clucene-core-0.9.15. Make sure you compile it in ASCII mode and install
+clucene-core-0.9.16a. Make sure you compile it in ASCII mode and install
 it in your standard library path.
 
 On a Linux platform this goes as follows:
 
-    wget http://kent.dl.sourceforge.net/sourceforge/clucene/clucene-core-0.9.15.tar.gz
-    tar xzf clucene-core-0.9.15.tar.gz
-    cd clucene-core-0.9.15
+    wget http://kent.dl.sourceforge.net/sourceforge/clucene/clucene-core-0.9.16a.tar.gz
+    tar xzf clucene-core-0.9.16a.tar.gz
+    cd clucene-core-0.9.16a
     ./autogen.sh
-    ./configure --disable-debug --prefix=/usr --exec-prefix=/usr --enable-ascii
+    ./configure --disable-debug --prefix=/usr --exec-prefix=/usr
     make
     make check
     (as root) make install

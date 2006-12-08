@@ -5,7 +5,11 @@ Directory* directory
 Analyzer* analyzer
 bool create
     CODE:
-        RETVAL = new IndexWriter(directory, analyzer, create);
+        try {
+          RETVAL = new IndexWriter(directory, analyzer, create);
+        } catch (CLuceneError& e) {
+          die("[Lucene::Index::IndexWriter->new()] %s\n", e.what());
+        }
     OUTPUT:
         RETVAL
     CLEANUP:
@@ -20,7 +24,11 @@ addDocument(self, document)
 IndexWriter* self
 Document* document
     CODE:
-        self->addDocument(document);
+        try {
+          self->addDocument(document);
+        } catch (CLuceneError& e) {
+          die("[Lucene::Index::IndexWriter->addDocument()] %s\n", e.what());
+        }
     OUTPUT:
 
 void
@@ -31,7 +39,11 @@ Directory* directory
         Directory* directories[1];
         directories[0] = directory;
         directories[1] = NULL;
-        self->addIndexes(directories);
+        try {
+          self->addIndexes(directories);
+        } catch (CLuceneError& e) {
+          die("[Lucene::Index::IndexWriter->addIndexes()] %s\n", e.what());
+        }
 
 
 void setMaxFieldLength(self, max_tokens)
@@ -117,7 +129,11 @@ void
 optimize(self)
 IndexWriter* self
     CODE:
-        self->optimize();
+        try {
+          self->optimize();
+        } catch (CLuceneError& e) {
+          die("[Lucene::Index::IndexWriter->optimize()] %s\n", e.what());
+        }
     OUTPUT:
 
 int

@@ -18,6 +18,8 @@ xs/Query.xs
 xs/Hits.xs
 xs/Sort.xs
 xs/SortField.xs
+xs/Filter.xs
+xs/QueryFilter.xs
 xs/IndexSearcher.xs
 xs/TermQuery.xs
 xs/FuzzyQuery.xs

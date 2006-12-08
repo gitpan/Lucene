@@ -1,7 +1,7 @@
 MultiFieldQueryParser *
 new(CLASS, field, analyzer)
 const char* CLASS;
-char* field
+wchar_t* field
 Analyzer* analyzer
     CODE:
         RETVAL = new MultiFieldQueryParser(field, analyzer);
@@ -16,13 +16,28 @@ Analyzer* analyzer
 Query*
 parse(self, query_string, fields, analyzer)
 MultiFieldQueryParser* self
-char* query_string
+wchar_t* query_string
 char** fields
 Analyzer* analyzer
     PREINIT:
         const char* CLASS = "Lucene::Search::Query";
     CODE:
-        RETVAL = self->parse(query_string, (const char**) fields, analyzer);
+        wchar_t* wfields[100];
+        int i = 0;
+        while (fields[i]) {
+          wfields[i] = STRDUP_AtoW(fields[i]);
+          i++;
+          if (i >= 100) { 
+            break;
+          }
+        }
+        wfields[i] = NULL;
+        RETVAL = self->parse(query_string, (const wchar_t**) wfields, analyzer);
+        i = 0;
+        while (wfields[i]) {
+          free (wfields[i]);
+          i++;
+        } 
     OUTPUT:
         RETVAL
 
