@@ -20,3 +20,5 @@ Revision history for Lucene
         Exception handling for IndexWriter and QueryParser.
         Enabled global loading of Lucene shared object.
 
+0.05    2006-12-18
+        Resolved bug when indexing float or interger numbers in field values.
