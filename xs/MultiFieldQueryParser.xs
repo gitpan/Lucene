@@ -32,7 +32,11 @@ Analyzer* analyzer
           }
         }
         wfields[i] = NULL;
-        RETVAL = self->parse(query_string, (const wchar_t**) wfields, analyzer);
+        try {
+          RETVAL = self->parse(query_string, (const wchar_t**) wfields, analyzer);
+        } catch (CLuceneError& e) {
+          die("[Lucene::MultiFieldQueryParser->parse()] %s\n", e.what());
+        }
         i = 0;
         while (wfields[i]) {
           free (wfields[i]);

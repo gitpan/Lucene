@@ -22,3 +22,7 @@ Revision history for Lucene
 
 0.05    2006-12-18
         Resolved bug when indexing float or interger numbers in field values.
+
+0.06    2006-12-21
+        Exception handling for MultiFieldQueryParser.
+
