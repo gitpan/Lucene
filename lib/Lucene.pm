@@ -6,7 +6,7 @@ use 5.006;
 use warnings;
 use strict;
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 our @ISA = qw( Exporter DynaLoader );
 our %EXPORT_TAGS = ( 'all' => [ qw() ] );
 our @EXPORT_OK   = ( @{ $EXPORT_TAGS{'all'} } );
@@ -163,7 +163,7 @@ $field->setBoost($boost);
 
 =head2 Query multiple fields simultaneously
 
-  my $parser = new Lucene::MultiFieldQueryParser("default_field", $analyzer);
+  my $parser = new Lucene::MultiFieldQueryParser(\@field_names, $analyzer);
   my $query = $parser->parse($query_string, \@field_names, $analyzer);
 
 =head2 Close your Store
@@ -232,15 +232,15 @@ get it is to go to the following page
     
     http://sourceforge.net/projects/clucene/
 
-and download the latest STABLE clucene-core version. Currently it is
-clucene-core-0.9.16a. Make sure you compile it in ASCII mode and install
+and download the latest clucene-core version. Currently it is
+clucene-core-0.9.17. Make sure you compile it with debug disabled and install
 it in your standard library path.
 
 On a Linux platform this goes as follows:
 
-    wget http://kent.dl.sourceforge.net/sourceforge/clucene/clucene-core-0.9.16a.tar.gz
-    tar xzf clucene-core-0.9.16a.tar.gz
-    cd clucene-core-0.9.16a
+    wget http://kent.dl.sourceforge.net/sourceforge/clucene/clucene-core-0.9.17.tar.gz
+    tar xzf clucene-core-0.9.17.tar.gz
+    cd clucene-core-0.9.17
     ./autogen.sh
     ./configure --disable-debug --prefix=/usr --exec-prefix=/usr
     make
@@ -260,7 +260,7 @@ Thomas Busch <tbusch at cpan dot org>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2006 Thomas Busch
+Copyright (c) 2007 Thomas Busch
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself. 

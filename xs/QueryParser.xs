@@ -29,11 +29,11 @@ wchar_t* query_string
         RETVAL
 
 void
-setLowercaseWildcardTerms(self, flag)
+setLowercaseExpandedTerms(self, flag)
 QueryParser * self
 bool flag
     CODE:
-        self->setLowercaseWildcardTerms(flag);
+        self->setLowercaseExpandedTerms(flag);
 
 void
 DESTROY(self)

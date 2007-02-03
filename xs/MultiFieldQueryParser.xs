@@ -1,10 +1,25 @@
 MultiFieldQueryParser *
-new(CLASS, field, analyzer)
-const char* CLASS;
-wchar_t* field
+new(CLASS, fields, analyzer)
+const char* CLASS
+char** fields
 Analyzer* analyzer
     CODE:
-        RETVAL = new MultiFieldQueryParser(field, analyzer);
+        wchar_t* wfields[100];
+        int i = 0;
+        while (fields[i]) {
+          wfields[i] = STRDUP_AtoW(fields[i]);
+          i++;
+          if (i >= 100) { 
+            break;
+          }
+        }
+        wfields[i] = NULL;
+        RETVAL = new MultiFieldQueryParser((const wchar_t**) wfields, analyzer);
+        i = 0;
+        while (wfields[i]) {
+          free (wfields[i]);
+          i++;
+        } 
     OUTPUT:
         RETVAL
     CLEANUP:
