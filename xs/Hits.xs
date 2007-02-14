@@ -25,6 +25,9 @@ int num
         // gets destroyed as well. Therefore, we need to make sure that if the
         // PERL Document object is alive, the Perl Hits object is alive as well 
         hv_store((HV *) SvRV(ST(0)), "Hits", 4, tmp_rv, 0);
+        // Indiquate that Document object is owned by the Hits object and
+        // that its destruction shouldn't be handled by Perl.
+        MarkObjCppOwned(ST(0));
 
 int 
 id(self, num)

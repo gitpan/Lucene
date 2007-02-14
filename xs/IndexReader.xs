@@ -34,6 +34,17 @@ IndexReader* self
     OUTPUT:
         RETVAL
 
+Document* 
+document(self, n)
+IndexReader* self
+const int32_t n
+    PREINIT:
+      const char* CLASS = "Lucene::Document";
+    CODE:
+       RETVAL = self->document(n);
+    OUTPUT:
+       RETVAL
+
 void
 close(self)
 IndexReader* self

@@ -4,21 +4,42 @@ extern "C" {
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
-#include "Av_CharPtrPtr.h"  /* XS_*_charPtrPtr() */
+//#include "Av_CharPtrPtr.h"  /* XS_*_charPtrPtr() */
 #ifdef __cplusplus
 }
 #endif
 
 
 #include "CLucene.h"
+#include "CLucene/CLConfig.h"
 #include "CLucene/queryParser/MultiFieldQueryParser.h"
 #include "CLucene/search/QueryFilter.h"
+#include "CLucene/analysis/AnalysisHeader.h"
+#include "CLucene/analysis/Analyzers.h"
+#include "CLucene/analysis/standard/StandardFilter.h"
+#include "CLucene/analysis/standard/StandardTokenizer.h"
+#include "CLucene/util/Reader.h"
 
 typedef lucene::analysis::Analyzer Analyzer;
 typedef lucene::analysis::SimpleAnalyzer SimpleAnalyzer;
 typedef lucene::analysis::StopAnalyzer StopAnalyzer;
 typedef lucene::analysis::WhitespaceAnalyzer WhitespaceAnalyzer;
+typedef lucene::analysis::PerFieldAnalyzerWrapper PerFieldAnalyzerWrapper;
+typedef lucene::analysis::standard::StandardTokenizer StandardTokenizer;
 typedef lucene::analysis::standard::StandardAnalyzer StandardAnalyzer;
+typedef lucene::analysis::standard::StandardFilter StandardFilter;
+typedef lucene::analysis::Token Token;
+typedef lucene::analysis::Tokenizer Tokenizer;
+typedef lucene::analysis::CharTokenizer CharTokenizer;
+typedef lucene::analysis::TokenFilter TokenFilter;
+typedef lucene::analysis::LowerCaseTokenizer LowerCaseTokenizer;
+typedef lucene::analysis::WhitespaceTokenizer WhitespaceTokenizer;
+typedef lucene::analysis::LetterTokenizer LetterTokenizer;
+typedef lucene::analysis::TokenStream TokenStream;
+typedef lucene::analysis::StopFilter StopFilter;
+typedef lucene::analysis::ISOLatin1AccentFilter ISOLatin1AccentFilter;
+typedef lucene::analysis::LowerCaseFilter LowerCaseFilter;
+typedef lucene::util::Reader Reader;
 typedef lucene::document::Document Document;
 typedef lucene::document::Field Field;
 typedef lucene::index::IndexWriter IndexWriter;
@@ -40,8 +61,25 @@ typedef lucene::store::Directory Directory;
 typedef lucene::store::FSDirectory FSDirectory;
 typedef lucene::store::RAMDirectory RAMDirectory;
 
+#include "cpp/utils.cpp"
+#include "cpp/MethodCall.cpp"
+#include "cpp/Wrapper.cpp"
+#include "cpp/Analyzer.cpp"
+#include "cpp/Tokenizer.cpp"
+#include "cpp/CharTokenizer.cpp"
+#include "cpp/TokenFilter.cpp"
+
+MODULE = Lucene        PACKAGE = Lucene
+INCLUDE: xs/Constants.xs
+
 MODULE = Lucene        PACKAGE = Lucene::Analysis::SimpleAnalyzer
 INCLUDE: xs/SimpleAnalyzer.xs
+
+MODULE = Lucene        PACKAGE = Lucene::Analysis::PerFieldAnalyzerWrapper
+INCLUDE: xs/PerFieldAnalyzerWrapper.xs
+
+MODULE = Lucene        PACKAGE = Lucene::Analysis::Analyzer
+INCLUDE: xs/Analyzer.xs
 
 MODULE = Lucene        PACKAGE = Lucene::Analysis::StopAnalyzer
 INCLUDE: xs/StopAnalyzer.xs
@@ -102,3 +140,40 @@ INCLUDE: xs/FSDirectory.xs
 
 MODULE = Lucene        PACKAGE = Lucene::Store::RAMDirectory
 INCLUDE: xs/RAMDirectory.xs
+
+MODULE = Lucene        PACKAGE = Lucene::Analysis::LowerCaseFilter
+INCLUDE: xs/LowerCaseFilter.xs
+
+MODULE = Lucene        PACKAGE = Lucene::Analysis::StopFilter
+INCLUDE: xs/StopFilter.xs
+
+MODULE = Lucene        PACKAGE = Lucene::Analysis::StandardFilter
+INCLUDE: xs/StandardFilter.xs
+
+MODULE = Lucene        PACKAGE = Lucene::Analysis::ISOLatin1AccentFilter
+INCLUDE: xs/ISOLatin1AccentFilter.xs
+
+MODULE = Lucene        PACKAGE = Lucene::Analysis::StandardTokenizer
+INCLUDE: xs/StandardTokenizer.xs
+
+MODULE = Lucene        PACKAGE = Lucene::Analysis::LowerCaseTokenizer
+INCLUDE: xs/LowerCaseTokenizer.xs
+
+MODULE = Lucene        PACKAGE = Lucene::Analysis::WhitespaceTokenizer
+INCLUDE: xs/WhitespaceTokenizer.xs
+
+MODULE = Lucene        PACKAGE = Lucene::Analysis::Tokenizer
+INCLUDE: xs/Tokenizer.xs
+
+MODULE = Lucene        PACKAGE = Lucene::Analysis::CharTokenizer
+INCLUDE: xs/CharTokenizer.xs
+
+MODULE = Lucene        PACKAGE = Lucene::Analysis::Token
+INCLUDE: xs/Token.xs
+
+MODULE = Lucene        PACKAGE = Lucene::Utils::Reader
+INCLUDE: xs/Reader.xs
+
+MODULE = Lucene        PACKAGE = Lucene::Analysis::TokenFilter
+INCLUDE: xs/TokenFilter.xs
+

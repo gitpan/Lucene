@@ -1,132 +1,118 @@
 TYPEMAP
-Document *              T_CPP_CLASS
-IndexWriter *           T_CPP_CLASS
-IndexReader *           T_CPP_CLASS
-Term *                  T_CPP_CLASS
-IndexSearcher *         T_CPP_CLASS
-Query *                 T_CPP_CLASS
-Hits *                  T_CPP_CLASS
-Sort *                  T_CPP_CLASS
-Filter *                T_CPP_CLASS
-QueryFilter *           T_CPP_CLASS
-SortField *             T_CPP_CLASS
-TermQuery *             T_CPP_CLASS
-FuzzyQuery *            T_CPP_CLASS
-QueryParser *           T_CPP_CLASS
-MultiFieldQueryParser * T_CPP_CLASS
-SimpleAnalyzer *        T_CPP_CLASS
-StopAnalyzer *          T_CPP_CLASS
-WhitespaceAnalyzer *    T_CPP_CLASS
-StandardAnalyzer *      T_CPP_CLASS
-RAMDirectory *          T_CPP_CLASS
-FSDirectory *           T_CPP_CLASS
-Field *                 T_CPP_CLASS
-Analyzer *              T_CPP_CLASS
-Directory *             T_CPP_CLASS
-Similarity *            T_CPP_CLASS
+Document *                T_CPP_CLASS
+Reader *                  T_CPP_CLASS
+IndexWriter *             T_CPP_CLASS
+IndexReader *             T_CPP_CLASS
+Term *                    T_CPP_CLASS
+IndexSearcher *           T_CPP_CLASS
+Query *                   T_CPP_CLASS
+Hits *                    T_CPP_CLASS
+Sort *                    T_CPP_CLASS
+Filter *                  T_CPP_CLASS
+StandardFilter *          T_CPP_CLASS
+StopFilter *              T_CPP_CLASS
+LowerCaseFilter *         T_CPP_CLASS
+ISOLatin1AccentFilter *   T_CPP_CLASS
+Token *                   T_CPP_CLASS
+Tokenizer *               T_CPP_CLASS
+TokenFilter *             T_CPP_CLASS
+TokenStream *             T_CPP_CLASS
+LowerCaseTokenizer *      T_CPP_CLASS
+WhitespaceTokenizer *     T_CPP_CLASS
+LetterTokenizer *         T_CPP_CLASS
+StandardTokenizer *       T_CPP_CLASS
+QueryFilter *             T_CPP_CLASS
+SortField *               T_CPP_CLASS
+TermQuery *               T_CPP_CLASS
+FuzzyQuery *              T_CPP_CLASS
+QueryParser *             T_CPP_CLASS
+MultiFieldQueryParser *   T_CPP_CLASS
+SimpleAnalyzer *          T_CPP_CLASS
+PerlAnalyzer *            T_CPP_CLASS
+PerlTokenizer *           T_CPP_CLASS
+PerlTokenFilter *         T_CPP_CLASS
+PerlCharTokenizer *       T_CPP_CLASS
+PerFieldAnalyzerWrapper * T_CPP_CLASS
+StopAnalyzer *            T_CPP_CLASS
+WhitespaceAnalyzer *      T_CPP_CLASS
+StandardAnalyzer *        T_CPP_CLASS
+RAMDirectory *            T_CPP_CLASS
+FSDirectory *             T_CPP_CLASS
+Field *                   T_CPP_CLASS
+Analyzer *                T_CPP_CLASS
+Directory *               T_CPP_CLASS
+Similarity *              T_CPP_CLASS
 
-wchar_t *               T_WCHAR
-const wchar_t *         T_WCHAR
+int32_t                   T_IV
+const int32_t             T_IV
+int64_t                   T_IV
+wchar_t **                T_WCHAR_ARRAY
+const wchar_t **          T_WCHAR_ARRAY
+wchar_t *                 T_WCHAR
+const wchar_t *           T_WCHAR
+wchar_t                   T_WCH
+const wchar_t             T_WCH
 
 
 
 INPUT
+T_IV
+    $var = ($type)SvIV($arg)
+
 T_CPP_CLASS
-        // Is $arg an object ? And is it a hash reference ?
-	if (sv_isobject($arg) && SvTYPE(SvRV($arg)) == SVt_PVHV) {
-          // Dereference hash
-	  HV *hv = (HV *) SvRV($arg);
-          // Get C++ object pointer from hash as integer value
-	  SV **sv = hv_fetch(hv, \"_objptr\", 7, 0);
-	  if (sv) {
-            // Transform integer value to pointer value
-	    $var = INT2PTR($type, SvIV(*sv));
-	    if (!$var) {
-              // Pointer shouldn't be zero. Something went wrong. Let's
-              // warn the user and return undef.
-	      warn ( \"${Package}::$func_name(): C++ object pointer is NULL\");
-              XSRETURN_UNDEF;
-            }
-	  } else {
-            // Hash doesn't contain a hash entry for _objptr. Let's 
-            // warn the user and return undef.
-	    warn ( \"${Package}::$func_name(): key _objptr is missing\");
+    {
+        $var = SvToPtr<$type>($arg);
+        if (!$var)
             XSRETURN_UNDEF;
-          }
-        // $arg is either not an object or a hash reference.
-        // Warn user and return undef.
-	} else {
-	  warn ( \"${Package}::$func_name(): $var is not a blessed hash reference\");
-          XSRETURN_UNDEF;
-        }
+    }
 
 T_WCHAR
-        {
-          // Get string length of argument. This works for PV, NV and IV.
-          // The STRLEN typdef is needed to ensure that this will work correctly
-          // in a 64-bit environment.
-          STRLEN arg_len;
-          SvPV($arg, arg_len);
+    $var = SvToWChar($arg);
+    SAVEFREEPV($var);
 
-          // Alloc memory for wide char string.  This could be a bit more
-          // then necessary.
-          Newz(0, $var, arg_len + 1, wchar_t);
+T_WCH
+    {
+        wchar_t *ch = SvToWChar($arg);
+        $var = ch[0];
+        Safefree(ch);
+    }
 
-          U8* src = (U8*) SvPV_nolen($arg);
-          wchar_t* dst = (wchar_t*) $var;
-
-          if (SvUTF8($arg)) {
-            // UTF8 to wide char mapping
-            STRLEN len;
-            while (*src) {
-              *dst++ = utf8_to_uvuni(src, &len);
-              src += len;
+T_WCHAR_ARRAY
+    {
+        int i = 0;
+        int inc = 1;
+        char **words = XS_unpack_charPtrPtr($arg);
+        Newz(0, $var, 100, wchar_t*);
+        while (words[i]) {
+            ${var}[i] = STRDUP_AtoW(words[i]);
+            ++i;
+            if (!(i % 100)) {
+                ++inc;
+                Renew($var, (100 * inc), wchar_t*);
             }
-          } else {
-            // char to wide char mapping
-            while (*src) {
-              *dst++ = (wchar_t) *src++;
-            }
-          }
-          *dst = 0;
-          SAVEFREEPV($var);
         }
+        ${var}[i] = NULL;
+        SAVEFREEPV($var);
+    }
 
 OUTPUT
+T_IV
+    sv_setiv($arg, (IV)$var);
 T_CPP_CLASS
         {
-          // Create hash
-          HV* new_hv = newHV(); 
-          // Create reference to hash without increasing its reference count
-          SV* tmp_rv = newRV_noinc((SV*) new_hv);
-          // Store pointer to C++ object as hash entry with key _objptr
-          hv_store(new_hv, "_objptr", 7, newSViv(PTR2IV((void*)$var)), 0);
-          // Bless hash reference as CLASS and copy it to $arg
-          sv_setsv($arg, sv_bless(tmp_rv, gv_stashpv(CLASS,1)));
-          // Remove temporary reference hash by setting ref count to zero
-          SvREFCNT_dec((SV*) tmp_rv);
-          // printf(\"created hash %p for %s\\n\", new_hv, CLASS);
+          PtrToSv(CLASS, (void*)$var, $arg);
         }
 
 T_WCHAR
         {
           wchar_t* src = (wchar_t*) $var;
-          U8* dst;
-          U8* d;
-
-          // Alloc memory for wide char string.  This is clearly wider
-          // then necessary in most cases but no choice.
-          Newz(0, dst, 3 * wcslen(src) + 1, U8);
-
-          d = dst;
-          while (*src) {
-            d = uvuni_to_utf8(d, *src++);
-          }
-          *d = 0;
-
-          sv_setpv((SV*)$arg, (char*) dst);
-          sv_utf8_decode($arg);
-
-          Safefree(dst);
+          WCharToSv(src, (SV*)$arg);
         }
 
+T_WCH
+        {
+          wchar_t src[2];
+          src[0] = (wchar_t)$var;
+          src[1] = 0;
+          WCharToSv(src, (SV*)$arg);
+        }

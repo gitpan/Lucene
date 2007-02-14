@@ -10,4 +10,5 @@ void
 DESTROY(self)
         WhitespaceAnalyzer * self
     CODE:
-        delete self;
+        if (!IsObjCppOwned(ST(0)))
+            delete self;

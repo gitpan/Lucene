@@ -2,11 +2,11 @@ package Lucene;
 require DynaLoader;
 require Exporter;
 
-use 5.006;
+use 5.008;
 use warnings;
 use strict;
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 our @ISA = qw( Exporter DynaLoader );
 our %EXPORT_TAGS = ( 'all' => [ qw() ] );
 our @EXPORT_OK   = ( @{ $EXPORT_TAGS{'all'} } );
@@ -39,12 +39,41 @@ Lucene -- API to the C++ port of the Lucene search engine
   my $analyzer = new Lucene::Analysis::SimpleAnalyzer();
   # same as before and removes stop words
   my $analyzer = new Lucene::Analysis::StopAnalyzer();
+  # sama as before but you provide your own stop words
+  my $analyzer = new Lucene::Analysis::StopAnalyzer([qw/that this in or and/]);
   # splits text at whitespace characters
   my $analyzer = new Lucene::Analysis::WhitespaceAnalyzer();
   # lowercases text, tokenized it based on a grammer that 
   # leaves named authorities intact (e-mails, company names,
   # web hostnames, IP addresses, etc) and removed stop words
   my $analyzer = new Lucene::Analysis::Standard::StandardAnalyzer();
+
+=head2 Create a custom Analyzer
+
+  package MyAnalyzer;
+
+  use base 'Lucene::Analysis::Analyzer';
+
+  # You MUST called SUPER::new if you implement new()
+  sub new {
+      my $class = shift;
+      my $self = $class->SUPER::new();
+      # ...
+      return $self;
+  }
+
+  sub tokenStream {
+      my ($self, $field, $reader) = @_;
+      my $ret = new Lucene::Analysis::StandardTokenizer($reader);
+      if ($field eq "MyKeywordField") {
+          return $ret;
+      }
+      $ret = new Lucene::Analysis::LowerCaseFilter($ret);
+      $ret = new Lucene::Analysis::StopFilter($ret, [qw/foo bar bax/]);
+      return $ret;
+  }
+  package main;
+  my $analyzer = new MyAnalyzer;
 
 =head2 Choose your Store (storage engine)
   
@@ -156,14 +185,25 @@ Lucene -- API to the C++ port of the Lucene search engine
   undef $searcher;
 }
 
+=head2 Access index by Document number
+
+  # create index reader
+  my $reader = Lucene::Index::IndexReader->open($store);
+
+  # get number of docs in index
+  my $num_docs = $reader->numDocs();
+
+  # get the nth document
+  my $document = $reader->document($n);
+
 =head2 Get/Set field boost factor
 
-my $boost = $field->getBoost();
-$field->setBoost($boost);
+  my $boost = $field->getBoost();
+  $field->setBoost($boost);
 
 =head2 Query multiple fields simultaneously
 
-  my $parser = new Lucene::MultiFieldQueryParser(\@field_names, $analyzer);
+  my $parser = new Lucene::MultiFieldQueryParser("default_field", $analyzer);
   my $query = $parser->parse($query_string, \@field_names, $analyzer);
 
 =head2 Close your Store
@@ -232,15 +272,15 @@ get it is to go to the following page
     
     http://sourceforge.net/projects/clucene/
 
-and download the latest clucene-core version. Currently it is
-clucene-core-0.9.17. Make sure you compile it with debug disabled and install
+and download the latest STABLE clucene-core version. Currently it is
+clucene-core-0.9.16a. Make sure you compile it in ASCII mode and install
 it in your standard library path.
 
 On a Linux platform this goes as follows:
 
-    wget http://kent.dl.sourceforge.net/sourceforge/clucene/clucene-core-0.9.17.tar.gz
-    tar xzf clucene-core-0.9.17.tar.gz
-    cd clucene-core-0.9.17
+    wget http://kent.dl.sourceforge.net/sourceforge/clucene/clucene-core-0.9.16a.tar.gz
+    tar xzf clucene-core-0.9.16a.tar.gz
+    cd clucene-core-0.9.16a
     ./autogen.sh
     ./configure --disable-debug --prefix=/usr --exec-prefix=/usr
     make
@@ -260,7 +300,7 @@ Thomas Busch <tbusch at cpan dot org>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2007 Thomas Busch
+Copyright (c) 2006-2007 Thomas Busch
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself. 

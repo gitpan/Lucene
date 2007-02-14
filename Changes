@@ -21,8 +21,20 @@ Revision history for Lucene
         Enabled global loading of Lucene shared object.
 
 0.05    2006-12-18
-        Resolved bug when indexing float or interger numbers in field values.
+        Resolved bug when indexing float or integer numbers in field values.
 
 0.06    2006-12-21
         Exception handling for MultiFieldQueryParser.
 
+0.07    2007-02-03
+        Package now requires clucene-core-0.9.17.
+
+0.08    2007-02-09
+        Made sure package compiles both with clucene-core-0.9.16a and clucene-core-0.9.17.
+        Added huge patch from Scott Beck containing the following:
+           - Analysis subclassing
+           - common Tokenizer classes
+           - Tokenizer subclassing
+           - common TokenFilter classes
+           - TokenFilter subclassing
+           - access to Lucene constants 

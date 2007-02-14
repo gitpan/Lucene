@@ -26,9 +26,6 @@ void
 DESTROY(self)
        Document* self
     CODE:
-       SV ** sv = hv_fetch((HV *) SvRV(ST(0)), "Hits", 4, 0);
-       if (!sv) {
-//         printf("deleted document\n");
-         delete self;
-       }
+       if (!IsObjCppOwned(ST(0)))
+            delete self;
 

@@ -1,8 +1,8 @@
 QueryParser *
 new(CLASS, field, analyzer)
-const char* CLASS;
-wchar_t* field
-Analyzer* analyzer
+    const char* CLASS;
+    wchar_t* field
+    Analyzer* analyzer
     CODE:
         RETVAL = new QueryParser(field, analyzer);
     OUTPUT:
@@ -29,11 +29,18 @@ wchar_t* query_string
         RETVAL
 
 void
-setLowercaseExpandedTerms(self, flag)
+setLowercaseWildcardTerms(self, flag)
 QueryParser * self
 bool flag
+    ALIAS:
+        setLowercaseWildcardTerms = 1
+        setLowercaseExpandedTerms = 2
     CODE:
+#ifdef CLUCENE_0_9_17
         self->setLowercaseExpandedTerms(flag);
+#else 
+        self->setLowercaseWildcardTerms(flag);
+#endif
 
 void
 DESTROY(self)
