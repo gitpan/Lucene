@@ -105,7 +105,10 @@ T_CPP_CLASS
 
 T_WCHAR
         {
-          wchar_t* src = (wchar_t*) $var;
+          wchar_t* src;
+          if (!$var)
+            XSRETURN_UNDEF;
+          src = (wchar_t*) $var;
           WCharToSv(src, (SV*)$arg);
         }
 

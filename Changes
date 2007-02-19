@@ -38,3 +38,6 @@ Revision history for Lucene
            - common TokenFilter classes
            - TokenFilter subclassing
            - access to Lucene constants 
+
+0.09    2007-02-16
+        Avoid segfault by returning undef when returned string is NULL.
