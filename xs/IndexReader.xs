@@ -17,12 +17,27 @@ Directory* directory
         // contains gets destroyed by C++. Otherwise this would cause a seg fault.
         hv_store((HV *) SvRV(ST(0)), "Directory", 9, newRV(SvRV(ST(1))), 1);
 
+void
+deleteDocument(self, doc_num)
+IndexReader* self
+const int32_t doc_num
+    CODE:
+        try {
+          self->deleteDocument(doc_num);
+        } catch (CLuceneError& e) {
+          die("[Lucene::Index::IndexReader->deleteDocument()] %s\n", e.what());
+        }
+
 int
 deleteDocuments(self, term)
 IndexReader* self
 Term* term
     CODE:
-        RETVAL = self->deleteDocuments(term);
+        try {
+          RETVAL = self->deleteDocuments(term);
+        } catch (CLuceneError& e) {
+          die("[Lucene::Index::IndexReader->deleteDocuments()] %s\n", e.what());
+        }
     OUTPUT:
         RETVAL
 
@@ -51,6 +66,20 @@ IndexReader* self
     CODE:
         self->close();
     OUTPUT:
+
+int
+hasDeletions(self) 
+IndexReader* self
+    CODE:
+        RETVAL = self->hasDeletions();
+    OUTPUT:
+        RETVAL
+
+void
+undeleteAll(self)
+IndexReader* self
+    CODE:
+        self->undeleteAll();
 
 void
 unlock(CLASS, directory)

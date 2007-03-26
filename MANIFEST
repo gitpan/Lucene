@@ -52,3 +52,5 @@ xs/TokenFilter.xs
 xs/Tokenizer.xs
 xs/WhitespaceAnalyzer.xs
 xs/WhitespaceTokenizer.xs
+xs/KeywordAnalyzer.xs
+

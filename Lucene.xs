@@ -20,6 +20,10 @@ extern "C" {
 #include "CLucene/analysis/standard/StandardTokenizer.h"
 #include "CLucene/util/Reader.h"
 
+#ifdef CLUCENE_0_9_17
+typedef lucene::analysis::KeywordAnalyzer KeywordAnalyzer;
+#endif
+
 typedef lucene::analysis::Analyzer Analyzer;
 typedef lucene::analysis::SimpleAnalyzer SimpleAnalyzer;
 typedef lucene::analysis::StopAnalyzer StopAnalyzer;
@@ -61,6 +65,8 @@ typedef lucene::store::Directory Directory;
 typedef lucene::store::FSDirectory FSDirectory;
 typedef lucene::store::RAMDirectory RAMDirectory;
 
+typedef wchar_t wchar_t_keepalive;
+
 #include "cpp/utils.cpp"
 #include "cpp/MethodCall.cpp"
 #include "cpp/Wrapper.cpp"
@@ -86,6 +92,13 @@ INCLUDE: xs/StopAnalyzer.xs
 
 MODULE = Lucene        PACKAGE = Lucene::Analysis::WhitespaceAnalyzer
 INCLUDE: xs/WhitespaceAnalyzer.xs
+
+#ifdef CLUCENE_0_9_17
+
+MODULE = Lucene        PACKAGE = Lucene::Analysis::KeywordAnalyzer
+INCLUDE: xs/KeywordAnalyzer.xs
+
+#endif
 
 MODULE = Lucene        PACKAGE = Lucene::Analysis::Standard::StandardAnalyzer
 INCLUDE: xs/StandardAnalyzer.xs

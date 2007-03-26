@@ -2,12 +2,31 @@
 #ifdef CLUCENE_0_9_17
 
 MultiFieldQueryParser *
-new(CLASS, fields, analyzer)
+new(CLASS, fields, analyzer, boosts_href=0)
 const char* CLASS;
-wchar_t** fields
+wchar_t_keepalive** fields
 Analyzer* analyzer
+HV* boosts_href
     CODE:
-        RETVAL = new MultiFieldQueryParser((const wchar_t**) fields, analyzer);
+        char* key;
+        I32 klen;
+        SV* val;
+
+        CL_NS(queryParser)::BoostMap* boosts = NULL;
+
+        if (boosts_href) {
+           boosts = new CL_NS(queryParser)::BoostMap;
+
+           hv_iterinit(boosts_href);
+           while((val = hv_iternextsv(boosts_href, &key, &klen))) {
+             NV boost = SvNV(val);
+             TCHAR* field = STRDUP_AtoW(key);
+             boosts->put(field, (float_t) boost);
+           }
+        }
+
+        RETVAL = new MultiFieldQueryParser((const wchar_t**) fields, analyzer, boosts);
+
     OUTPUT:
         RETVAL
     CLEANUP:
@@ -15,6 +34,39 @@ Analyzer* analyzer
         // We don't want it to be destroyed by perl before the C++ object it
         // contains gets destroyed by C++. Otherwise this would cause a seg fault.
         hv_store((HV *) SvRV(ST(0)), "Analyzer", 8, newRV(SvRV(ST(2))), 1);
+
+        // Memorize fields table
+        hv_store((HV *) SvRV(ST(0)), "fields", 6, newSViv(PTR2IV(fields)) , 0);
+
+        // Memorize boosts 
+        if (boosts) {
+          hv_store((HV *) SvRV(ST(0)), "boosts", 6, newSViv(PTR2IV(boosts)) , 0);
+        }
+
+void
+DESTROY(self)
+MultiFieldQueryParser *self
+    CODE:
+        SV **svp = hv_fetch((HV *) SvRV(ST(0)), "fields", 6, 0);
+        if (!svp) {
+          die("no fields in MultiFieldQueryParser hash\n"); 
+        }
+        wchar_t** fields = INT2PTR(wchar_t**, SvIV(*svp));
+        if ( fields !=NULL ) {
+          for(int xcda=0; fields[xcda] != NULL; xcda++) {
+            delete [] fields[xcda];
+          }
+        }
+        SAVEFREEPV(fields);
+
+        SV **sv_boost = hv_fetch((HV *) SvRV(ST(0)), "boosts", 6, 0);
+        if (sv_boost) {
+          CL_NS(queryParser)::BoostMap* boosts = INT2PTR(CL_NS(queryParser)::BoostMap*, SvIV(*sv_boost));
+          delete boosts;
+        }
+
+        delete self;
+
 
 #else
 
@@ -33,19 +85,42 @@ Analyzer* analyzer
         // contains gets destroyed by C++. Otherwise this would cause a seg fault.
         hv_store((HV *) SvRV(ST(0)), "Analyzer", 8, newRV(SvRV(ST(2))), 1);
 
+
+void
+DESTROY(self)
+        MultiFieldQueryParser * self
+    CODE:
+        delete self;
+
 #endif
 
 Query*
-parse(self, query_string, wfields, analyzer)
-MultiFieldQueryParser* self
-wchar_t* query_string
-wchar_t** wfields
-Analyzer* analyzer
+parse(self, query_string, wfields=0, analyzer=0)
+  CASE: items == 2
+  MultiFieldQueryParser* self
+  wchar_t* query_string
     PREINIT:
         const char* CLASS = "Lucene::Search::Query";
     CODE:
         try {
-          RETVAL = self->parse(query_string, (const wchar_t**) wfields, analyzer);
+          QueryParser *qp = (QueryParser*) self;
+          RETVAL = qp->parse(query_string);
+        } catch (CLuceneError& e) {
+          die("[Lucene::MultiFieldQueryParser->parse()] %s\n", e.what());
+        }
+    OUTPUT:
+        RETVAL
+
+  CASE: items == 4
+  const char* self;
+  wchar_t* query_string
+  wchar_t** wfields
+  Analyzer* analyzer
+    PREINIT:
+        const char* CLASS = "Lucene::Search::Query";
+    CODE:
+        try {
+          RETVAL = lucene::queryParser::MultiFieldQueryParser::parse(query_string, (const wchar_t**) wfields, analyzer);
         } catch (CLuceneError& e) {
           die("[Lucene::MultiFieldQueryParser->parse()] %s\n", e.what());
         }
@@ -60,8 +135,14 @@ Analyzer* analyzer
         } 
 
 void
-DESTROY(self)
-        MultiFieldQueryParser * self
+setDefaultOperator(self, oper)
+MultiFieldQueryParser* self
+int oper
     CODE:
-        delete self;
+        QueryParser *qp = (QueryParser*) self;
+#ifdef CLUCENE_0_9_17
+        qp->setDefaultOperator(oper);
+#else
+        qp->setOperator(oper);
+#endif
 

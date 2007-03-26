@@ -44,8 +44,9 @@ if (!defined $clucene_version) {
 print "Building using clucene-core $clucene_version\n";
 
 my $define = $clucene_version;
-$define =~ s/\./_/g;
-$define =~ tr/a-z/A-Z/;
+$define =~ s/-svn//;
+$define =~ s/[\.]/_/g;
+$define =~ s/[a-z]//g;
 $define = "-DCLUCENE_$define";
 
 

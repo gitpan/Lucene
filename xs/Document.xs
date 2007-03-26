@@ -22,6 +22,21 @@ get(self, field)
     OUTPUT:
        RETVAL
 
+void 
+removeField(self, field)
+       Document* self
+       wchar_t* field
+    CODE:
+       self->removeField(field);
+
+const wchar_t*
+toString(self)
+       Document* self
+    CODE:
+       RETVAL = self->toString();
+    OUTPUT:
+       RETVAL
+
 void
 DESTROY(self)
        Document* self

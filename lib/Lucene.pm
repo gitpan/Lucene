@@ -6,7 +6,7 @@ use 5.008;
 use warnings;
 use strict;
 
-our $VERSION = '0.09';
+our $VERSION = '0.13';
 our @ISA = qw( Exporter DynaLoader );
 our %EXPORT_TAGS = ( 'all' => [ qw() ] );
 our @EXPORT_OK   = ( @{ $EXPORT_TAGS{'all'} } );
@@ -39,7 +39,7 @@ Lucene -- API to the C++ port of the Lucene search engine
   my $analyzer = new Lucene::Analysis::SimpleAnalyzer();
   # same as before and removes stop words
   my $analyzer = new Lucene::Analysis::StopAnalyzer();
-  # sama as before but you provide your own stop words
+  # same as before but you provide your own stop words
   my $analyzer = new Lucene::Analysis::StopAnalyzer([qw/that this in or and/]);
   # splits text at whitespace characters
   my $analyzer = new Lucene::Analysis::WhitespaceAnalyzer();
@@ -47,6 +47,10 @@ Lucene -- API to the C++ port of the Lucene search engine
   # leaves named authorities intact (e-mails, company names,
   # web hostnames, IP addresses, etc) and removed stop words
   my $analyzer = new Lucene::Analysis::Standard::StandardAnalyzer();
+  # same as before but you provide your own stop words
+  my $analyzer = new Lucene::Analysis::Standard::StandardAnalyzer([qw/that this in or and/]);
+  # takes string as it is (only when using clucene-0.9.17 or above)
+  my $analyzer = new Lucene::Analysis::KeywordAnalyzer();
 
 =head2 Create a custom Analyzer
 
@@ -203,8 +207,13 @@ Lucene -- API to the C++ port of the Lucene search engine
 
 =head2 Query multiple fields simultaneously
 
-  my $parser = new Lucene::MultiFieldQueryParser("default_field", $analyzer);
-  my $query = $parser->parse($query_string, \@field_names, $analyzer);
+  my $parser = Lucene::MultiFieldQueryParser->parse($uqery_string, \@field_names, $analyzer);
+
+Additional functionalities when compiling against clucene-0.9.17a or above:
+
+  my %rh_boosts = { "title" => 3, "subject" => 2 };
+  my $parser = new Lucene::MultiFieldQueryParser(\@field_names, $analyzer, \%rh_boosts);
+  my $query = $parser->parse($query_string);
 
 =head2 Close your Store
 
