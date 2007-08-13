@@ -36,11 +36,7 @@ bool flag
         setLowercaseWildcardTerms = 1
         setLowercaseExpandedTerms = 2
     CODE:
-#ifdef CLUCENE_0_9_17
         self->setLowercaseExpandedTerms(flag);
-#else 
-        self->setLowercaseWildcardTerms(flag);
-#endif
 
 
 void
@@ -49,11 +45,7 @@ QueryParser* self
 int oper
     CODE:
         QueryParser *qp = (QueryParser*) self;
-#ifdef CLUCENE_0_9_17
         qp->setDefaultOperator(oper);
-#else
-        qp->setOperator(oper);
-#endif
 
 void
 DESTROY(self)

@@ -12,7 +12,7 @@ new(CLASS, sortfield1, sortfield2 = 0)
     SortField* sortfield1
     SortField* sortfield2
     CODE:
-        SortField* sortfields[2];
+        SortField* sortfields[3];
         sortfields[0] = sortfield1;
         sortfields[1] = sortfield2;
         sortfields[2] = NULL;

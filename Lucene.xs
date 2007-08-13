@@ -14,16 +14,14 @@ extern "C" {
 #include "CLucene/CLConfig.h"
 #include "CLucene/queryParser/MultiFieldQueryParser.h"
 #include "CLucene/search/QueryFilter.h"
+#include "CLucene/search/RangeFilter.h"
 #include "CLucene/analysis/AnalysisHeader.h"
 #include "CLucene/analysis/Analyzers.h"
 #include "CLucene/analysis/standard/StandardFilter.h"
 #include "CLucene/analysis/standard/StandardTokenizer.h"
 #include "CLucene/util/Reader.h"
 
-#ifdef CLUCENE_0_9_17
 typedef lucene::analysis::KeywordAnalyzer KeywordAnalyzer;
-#endif
-
 typedef lucene::analysis::Analyzer Analyzer;
 typedef lucene::analysis::SimpleAnalyzer SimpleAnalyzer;
 typedef lucene::analysis::StopAnalyzer StopAnalyzer;
@@ -51,11 +49,14 @@ typedef lucene::index::IndexReader IndexReader;
 typedef lucene::index::Term Term;
 typedef lucene::search::IndexSearcher IndexSearcher;
 typedef lucene::search::Hits Hits;
+typedef lucene::search::HitCollector HitCollector;
 typedef lucene::search::Filter Filter;
 typedef lucene::search::QueryFilter QueryFilter;
+typedef lucene::search::RangeFilter RangeFilter;
 typedef lucene::search::Sort Sort;
 typedef lucene::search::SortField SortField;
 typedef lucene::search::Query Query;
+typedef lucene::search::Explanation Explanation;
 typedef lucene::search::TermQuery TermQuery;
 typedef lucene::search::FuzzyQuery FuzzyQuery;
 typedef lucene::search::Similarity Similarity;
@@ -93,12 +94,8 @@ INCLUDE: xs/StopAnalyzer.xs
 MODULE = Lucene        PACKAGE = Lucene::Analysis::WhitespaceAnalyzer
 INCLUDE: xs/WhitespaceAnalyzer.xs
 
-#ifdef CLUCENE_0_9_17
-
 MODULE = Lucene        PACKAGE = Lucene::Analysis::KeywordAnalyzer
 INCLUDE: xs/KeywordAnalyzer.xs
-
-#endif
 
 MODULE = Lucene        PACKAGE = Lucene::Analysis::Standard::StandardAnalyzer
 INCLUDE: xs/StandardAnalyzer.xs
@@ -124,8 +121,14 @@ INCLUDE: xs/IndexSearcher.xs
 MODULE = Lucene        PACKAGE = Lucene::Search::Hits
 INCLUDE: xs/Hits.xs
 
+MODULE = Lucene        PACKAGE = Lucene::Search::Explanation
+INCLUDE: xs/Explanation.xs
+
 MODULE = Lucene        PACKAGE = Lucene::Search::QueryFilter
 INCLUDE: xs/QueryFilter.xs
+
+MODULE = Lucene        PACKAGE = Lucene::Search::RangeFilter
+INCLUDE: xs/RangeFilter.xs
 
 MODULE = Lucene        PACKAGE = Lucene::Search::Sort
 INCLUDE: xs/Sort.xs

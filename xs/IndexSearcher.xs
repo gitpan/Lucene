@@ -76,6 +76,19 @@ search(self, query, obj2 = 0, obj3 = 0)
        CODE:
          die("Usage: Lucene::Search::IndexSearcher::search(self, query, [sort | filter | filter, sort])");
 
+void 
+_search(self, query, hit_collector)
+    IndexSearcher* self
+    Query* query
+    HitCollector* hit_collector
+    CODE:
+      try {
+        self->_search(query, NULL, hit_collector);
+      } catch (CLuceneError& e) {
+        die("[Lucene::Search::IndexSearcher->_search()] %s\n", e.what());
+      }
+
+
 void
 setSimilarity(self, similarity)
 IndexSearcher* self
@@ -96,6 +109,19 @@ IndexSearcher* self
         self->close();
     OUTPUT:
 
+Explanation*
+explain(self, query, doc_num)
+IndexSearcher* self
+Query* query
+int32_t doc_num
+    PREINIT:
+        const char* CLASS = "Lucene::Search::Explanation";
+    CODE:
+        Explanation* explanation = new Explanation();
+        self->explain(query, doc_num, explanation);
+        RETVAL = explanation;
+    OUTPUT:
+        RETVAL
 
 void
 DESTROY(self)

@@ -49,6 +49,15 @@ IndexReader* self
     OUTPUT:
         RETVAL
 
+int32_t
+docFreq(self, term)
+IndexReader* self
+Term* term
+    CODE:
+        RETVAL = self->docFreq(term);
+    OUTPUT:
+        RETVAL
+
 Document* 
 document(self, n)
 IndexReader* self

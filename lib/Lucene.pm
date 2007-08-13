@@ -6,7 +6,8 @@ use 5.008;
 use warnings;
 use strict;
 
-our $VERSION = '0.13';
+
+our $VERSION = '0.17';
 our @ISA = qw( Exporter DynaLoader );
 our %EXPORT_TAGS = ( 'all' => [ qw() ] );
 our @EXPORT_OK   = ( @{ $EXPORT_TAGS{'all'} } );
@@ -49,7 +50,7 @@ Lucene -- API to the C++ port of the Lucene search engine
   my $analyzer = new Lucene::Analysis::Standard::StandardAnalyzer();
   # same as before but you provide your own stop words
   my $analyzer = new Lucene::Analysis::Standard::StandardAnalyzer([qw/that this in or and/]);
-  # takes string as it is (only when using clucene-0.9.17 or above)
+  # takes string as it is
   my $analyzer = new Lucene::Analysis::KeywordAnalyzer();
 
 =head2 Create a custom Analyzer
@@ -207,10 +208,10 @@ Lucene -- API to the C++ port of the Lucene search engine
 
 =head2 Query multiple fields simultaneously
 
-  my $parser = Lucene::MultiFieldQueryParser->parse($uqery_string, \@field_names, $analyzer);
+  my $parser = new Lucene::MultiFieldQueryParser(\@field_names, $analyzer);
+  my $query = $parser->parse($query_string);
 
-Additional functionalities when compiling against clucene-0.9.17a or above:
-
+  # ... using different boosts per field
   my %rh_boosts = { "title" => 3, "subject" => 2 };
   my $parser = new Lucene::MultiFieldQueryParser(\@field_names, $analyzer, \%rh_boosts);
   my $query = $parser->parse($query_string);
@@ -282,14 +283,14 @@ get it is to go to the following page
     http://sourceforge.net/projects/clucene/
 
 and download the latest STABLE clucene-core version. Currently it is
-clucene-core-0.9.16a. Make sure you compile it in ASCII mode and install
+clucene-core-0.9.19. Make sure you compile it in ASCII mode and install
 it in your standard library path.
 
 On a Linux platform this goes as follows:
 
-    wget http://kent.dl.sourceforge.net/sourceforge/clucene/clucene-core-0.9.16a.tar.gz
-    tar xzf clucene-core-0.9.16a.tar.gz
-    cd clucene-core-0.9.16a
+    wget http://kent.dl.sourceforge.net/sourceforge/clucene/clucene-core-0.9.19.tar.gz
+    tar xzf clucene-core-0.9.19.tar.gz
+    cd clucene-core-0.9.19
     ./autogen.sh
     ./configure --disable-debug --prefix=/usr --exec-prefix=/usr
     make

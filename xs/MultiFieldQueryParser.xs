@@ -1,6 +1,3 @@
-
-#ifdef CLUCENE_0_9_17
-
 MultiFieldQueryParser *
 new(CLASS, fields, analyzer, boosts_href=0)
 const char* CLASS;
@@ -68,32 +65,6 @@ MultiFieldQueryParser *self
         delete self;
 
 
-#else
-
-MultiFieldQueryParser *
-new(CLASS, field, analyzer)
-const char* CLASS;
-wchar_t* field
-Analyzer* analyzer
-    CODE:
-        RETVAL = new MultiFieldQueryParser(field, analyzer);
-    OUTPUT:
-        RETVAL
-    CLEANUP:
-        // Memorize Analyzer in returned blessed hash reference.
-        // We don't want it to be destroyed by perl before the C++ object it
-        // contains gets destroyed by C++. Otherwise this would cause a seg fault.
-        hv_store((HV *) SvRV(ST(0)), "Analyzer", 8, newRV(SvRV(ST(2))), 1);
-
-
-void
-DESTROY(self)
-        MultiFieldQueryParser * self
-    CODE:
-        delete self;
-
-#endif
-
 Query*
 parse(self, query_string, wfields=0, analyzer=0)
   CASE: items == 2
@@ -140,9 +111,5 @@ MultiFieldQueryParser* self
 int oper
     CODE:
         QueryParser *qp = (QueryParser*) self;
-#ifdef CLUCENE_0_9_17
         qp->setDefaultOperator(oper);
-#else
-        qp->setOperator(oper);
-#endif
 

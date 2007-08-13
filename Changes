@@ -51,9 +51,21 @@ Revision history for Lucene
 
 0.12    2007-03-23
         Added possiblity to specify stop words in StandardAnalyzer.
-        Added toString method to Document class
+        Added toString method to Document class.
         Exception handling for deleteDocuments in IndexReader.
 
 0.13    2007-03-26
-        Added deleteDocument, hasDeletions and undeleteAll methods to IndexReader class
+        Added deleteDocument, hasDeletions and undeleteAll methods to IndexReader class.
 
+0.14    2007-04-04
+        Added RangeFiler.
+        Package now required clucene-core-0.9.17 or above.
+
+0.15    2007-04-12
+        Added _search method in IndexSearcher for HitCollectors.
+
+0.16    2007-04-18
+        Added Explanation.
+
+0.17    2007-08-13
+        Solved bug when sorting on two sortfields.

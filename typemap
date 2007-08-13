@@ -6,6 +6,8 @@ IndexReader *               T_CPP_CLASS
 Term *                      T_CPP_CLASS
 IndexSearcher *             T_CPP_CLASS
 Query *                     T_CPP_CLASS
+Explanation *               T_CPP_CLASS
+HitCollector *              T_CPP_CLASS
 Hits *                      T_CPP_CLASS
 Sort *                      T_CPP_CLASS
 Filter *                    T_CPP_CLASS
@@ -22,6 +24,7 @@ WhitespaceTokenizer *       T_CPP_CLASS
 LetterTokenizer *           T_CPP_CLASS
 StandardTokenizer *         T_CPP_CLASS
 QueryFilter *               T_CPP_CLASS
+RangeFilter *               T_CPP_CLASS
 SortField *                 T_CPP_CLASS
 TermQuery *                 T_CPP_CLASS
 FuzzyQuery *                T_CPP_CLASS

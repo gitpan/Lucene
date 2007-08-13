@@ -3,6 +3,7 @@ use warnings;
 use ExtUtils::MakeMaker;
 
 my $author = 'Thomas Busch <tbusch at cpan dot org>';
+my $MIN_CLUCENE_VERSION = '0.9.17';
 
 ## Hash that specifies for each OS all possible directories to look
 ## for CLucene/clucene-config.h
@@ -38,7 +39,13 @@ print "Using clucene config file $config_file to build Makefile\n";
 my $clucene_version = find_clucene_version($config_file);
 
 if (!defined $clucene_version) {
-  die "couldn't find clucene version in $config_file";
+  print "\nCouldn't find clucene version in $config_file\n";
+  exit(0);
+}
+
+if ($clucene_version lt $MIN_CLUCENE_VERSION) {
+  print "\nThis CPAN module requires clucene-core-$MIN_CLUCENE_VERSION or above to be installed.\n";
+  exit(0);
 }
 
 print "Building using clucene-core $clucene_version\n";
