@@ -69,3 +69,6 @@ Revision history for Lucene
 
 0.17    2007-08-13
         Solved bug when sorting on two sortfields.
+
+0.18    2007-09-26
+        Make sure addIndexes can take more than one Directory

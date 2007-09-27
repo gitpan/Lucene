@@ -7,7 +7,7 @@ use warnings;
 use strict;
 
 
-our $VERSION = '0.17';
+our $VERSION = '0.18';
 our @ISA = qw( Exporter DynaLoader );
 our %EXPORT_TAGS = ( 'all' => [ qw() ] );
 our @EXPORT_OK   = ( @{ $EXPORT_TAGS{'all'} } );
@@ -230,6 +230,16 @@ and the IndexSearcher
   $searcher->setSimilarity($similarity);
   $writer->setSimilarity($similarity);
 
+=head2 Merge indexes
+
+To merge several indexes into a single one, use the following method of
+IndexWriter
+
+  $writer->addIndexes(@stores);
+
+This will add @stores to the writer's current store, and then optimize
+the resulting index.
+
 =head1 DESCRIPTION
 
 Like it or not Lucene has become the de-facto standard for open-source
@@ -283,14 +293,13 @@ get it is to go to the following page
     http://sourceforge.net/projects/clucene/
 
 and download the latest STABLE clucene-core version. Currently it is
-clucene-core-0.9.19. Make sure you compile it in ASCII mode and install
-it in your standard library path.
+clucene-core-0.9.20. Make sure you install it in your standard library path.
 
 On a Linux platform this goes as follows:
 
-    wget http://kent.dl.sourceforge.net/sourceforge/clucene/clucene-core-0.9.19.tar.gz
-    tar xzf clucene-core-0.9.19.tar.gz
-    cd clucene-core-0.9.19
+    wget http://kent.dl.sourceforge.net/sourceforge/clucene/clucene-core-0.9.20.tar.gz
+    tar xzf clucene-core-0.9.20.tar.gz
+    cd clucene-core-0.9.20
     ./autogen.sh
     ./configure --disable-debug --prefix=/usr --exec-prefix=/usr
     make
@@ -303,6 +312,12 @@ To install the perl module itself, run the following commands:
     make
     make test
     (as root) make install
+
+=head1 SUPPORT AND FEEDBACK
+
+For support and feedback please use the following mailing list:
+
+    https://lists.sourceforge.net/lists/listinfo/clucene-perl
 
 =head1 AUTHOR
 

@@ -32,18 +32,25 @@ Document* document
     OUTPUT:
 
 void
-addIndexes(self, directory)
+addIndexes(self, ...)
 IndexWriter* self
-Directory* directory
+    PREINIT:
+        int i;
+        Directory **directories = NULL;
     CODE:
-        Directory* directories[1];
-        directories[0] = directory;
-        directories[1] = NULL;
+        directories = (Directory **) malloc(sizeof(Directory *) * items);
+        for (i = 0; i < items - 1; i++) {
+          directories[i] = SvToPtr<Directory *>(ST(i + 1));
+        }
+        directories[items - 1] = NULL;
+
         try {
           self->addIndexes(directories);
         } catch (CLuceneError& e) {
           die("[Lucene::Index::IndexWriter->addIndexes()] %s\n", e.what());
         }
+
+        free(directories);
 
 
 void setMaxFieldLength(self, max_tokens)
